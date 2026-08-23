@@ -1,0 +1,18 @@
+# Personal deep dive notes (not for public repo)
+docs/deep_dive.md
+
+# Raw data files (3.3 GB)
+access.log
+client_hostname.csv
+spark-apps/access.log
+spark-apps/client_hostname.csv
+
+# Runtime & Temporary files
+*.log
+null
+spark-events/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db

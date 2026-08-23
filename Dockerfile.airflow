@@ -1,0 +1,26 @@
+FROM apache/airflow:3.3.1
+# SimpleAuthManager is the Airflow 3 default (replaces FAB).
+# psycopg2-binary is bundled in the AF3.3.1 base image.
+#
+# Additions:
+#   1. default-jre-headless — required by spark-submit to open a JVM
+#   2. apache-airflow-providers-apache-spark — provides SparkSubmitOperator
+#   3. pyspark==3.5.6 — version-matched to the cluster; provides the
+#      spark-submit binary at $SPARK_HOME/bin/spark-submit
+#
+# SPARK_HOME points to the pip-installed pyspark location so that
+# SparkSubmitOperator can resolve spark_home/bin/spark-submit without
+# a full standalone Spark installation on the node.
+
+USER root
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends procps default-jre-headless \
+    && rm -rf /var/lib/apt/lists/*
+
+USER airflow
+RUN pip install --no-cache-dir \
+      "apache-airflow-providers-apache-spark" \
+      "pyspark==3.5.6"
+
+ENV SPARK_HOME=/home/airflow/.local/lib/python3.13/site-packages/pyspark
+ENV PATH="${SPARK_HOME}/bin:${PATH}"
